@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Mode Calculator</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            margin: 0;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 10px;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            width: 90%;
+            max-width: 450px;
+        }
+        h2 {
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+        select, input, button {
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 5px;
+            text-align: center;
+            width: 100%;
+            outline: none;
+        }
+        select {
+    background: #ff6f61;
+    color: white;
+    cursor: pointer;
+    width: 40%; /* Width adjust karo as needed */
+    display: block;
+    margin-left: 0;   /* Left side pe shift */
+    margin-right: auto;  /* Right side se auto margin */
+    text-align: center; /* Selected option center aligned rahe */
+    text-align-last: center; /* Dropdown ke andar ke options bhi center hon */
+}
+
+
+
+
+        input {
+            background: white;
+            color: black;
+        }
+        button {
+            background: linear-gradient(135deg, #ff512f, #dd2476);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        button:hover {
+            transform: scale(1.1);
+            background: linear-gradient(135deg, #dd2476, #ff512f);
+        }
+        .mode-container {
+            display: none;
+            margin-top: 15px;
+        }
+        #simple-input {
+            width: 90%;
+            font-size: 22px;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            outline: none;
+            background: white;
+            color: black;
+        }
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .calculator-grid button {
+            padding: 15px;
+            font-size: 20px;
+            border-radius: 8px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+                width: 100%;
+            }
+            h2 {
+                font-size: 20px;
+            }
+            select, input, button {
+                font-size: 16px;
+            }
+            .calculator-grid button {
+                font-size: 18px;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Multi-Mode Calculator</h2>
+        <select id="mode" onchange="toggleMode()">
+            <option value="factorization">Factorization</option>
+            <option value="simple">Simple Calculator</option>
+        </select>
+
+        <div id="factorization-mode" class="mode-container">
+            <p>Enter coefficients for quadratic equation (ax² + bx + c):</p>
+            <input type="number" id="a" placeholder="a"> x² +
+            <input type="number" id="b" placeholder="b"> x +
+            <input type="number" id="c" placeholder="c">
+            <br>
+            <button onclick="calculateFactorization()">Factorize</button>
+            <h3 id="factorization-result"></h3>
+        </div>
+
+        <div id="simple-mode" class="mode-container">
+            <input type="text" id="simple-input" placeholder="Enter expression" readonly>
+            <div class="calculator-grid">
+                <button onclick="appendSimple('1')">1</button>
+                <button onclick="appendSimple('2')">2</button>
+                <button onclick="appendSimple('3')">3</button>
+                <button onclick="appendSimple('+')">+</button>
+                <button onclick="appendSimple('4')">4</button>
+                <button onclick="appendSimple('5')">5</button>
+                <button onclick="appendSimple('6')">6</button>
+                <button onclick="appendSimple('-')">-</button>
+                <button onclick="appendSimple('7')">7</button>
+                <button onclick="appendSimple('8')">8</button>
+                <button onclick="appendSimple('9')">9</button>
+                <button onclick="appendSimple('*')">*</button>
+                <button onclick="appendSimple('0')">0</button>
+                <button onclick="clearSimple()">C</button>
+                <button onclick="calculateSimple()">=</button>
+                <button onclick="appendSimple('/')">/</button>
+            </div>
+            <h3 id="simple-result"></h3>
+        </div>
+    </div>
+
+    <script>
+        function toggleMode() {
+            document.getElementById("factorization-mode").style.display = "none";
+            document.getElementById("simple-mode").style.display = "none";
+            document.getElementById(document.getElementById("mode").value + "-mode").style.display = "block";
+        }
+
+        function calculateFactorization() {
+            let a = parseInt(document.getElementById("a").value);
+            let b = parseInt(document.getElementById("b").value);
+            let c = parseInt(document.getElementById("c").value);
+            let resultField = document.getElementById("factorization-result");
+            if (isNaN(a) || isNaN(b) || isNaN(c)) {
+                resultField.innerText = "Please enter valid numbers";
+                return;
+            }
+            let product = a * c;
+            let sum = b;
+            let factors = [];
+            for (let i = -Math.abs(product); i <= Math.abs(product); i++) {
+                if (i !== 0 && product % i === 0) {
+                    let j = product / i;
+                    if (i + j === sum) {
+                        factors = [i, j];
+                        break;
+                    }
+                }
+            }
+            if (factors.length === 0) {
+                resultField.innerText = "Cannot be factorized using mid-term breaking";
+                return;
+            }
+            resultField.innerText = `(${a}x + ${factors[0]})(${a}x + ${factors[1]})`;
+        }
+
+        function appendSimple(value) {
+            document.getElementById("simple-input").value += value;
+        }
+        function clearSimple() {
+            document.getElementById("simple-input").value = "";
+            document.getElementById("simple-result").innerText = "";
+        }
+        function calculateSimple() {
+            try {
+                document.getElementById("simple-result").innerText = eval(document.getElementById("simple-input").value);
+            } catch {
+                document.getElementById("simple-result").innerText = "Error";
+            }
+        }
+    </script>
+</body>
+</html>
